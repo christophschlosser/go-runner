@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"net/http"
@@ -83,7 +82,7 @@ func run(command string, arg string) (string, error) {
 	args = append(args, arg)
 	cmdArgs := strings.Fields(arg)
 	out, err := exec.Command(command, cmdArgs...).Output()
-	res := fmt.Sprintf("%s", out)
+	res := string(out[:])
 
 	return res, err
 }
