@@ -3,6 +3,7 @@
 *.dll
 *.so
 *.dylib
+/go-runner
 
 # Test binary, build with `go test -c`
 *.test
