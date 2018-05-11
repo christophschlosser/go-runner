@@ -103,6 +103,8 @@ $ curl -X POST http://127.0.0.1:8080/v1/history/3?json=true{"output":"./\n../\n.
 
 Specify the `-www` option with a path to where you store your static web files.
 
+An example ui can be found in the repository under the www folder.
+
 Example:
 
 ```bash
