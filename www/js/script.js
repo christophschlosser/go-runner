@@ -39,9 +39,12 @@ function history() {
         history.innerHTML = ""
         data.forEach(element => {
             var cmd = document.createElement("div")
-            cmd.className = "history-command col-sm-10"
+            cmd.className = "col-sm-10"
             cmd.id = "history-entry-cmd-" + element.id
-            cmd.textContent = element.cmd + " " + element.args
+            var cmdArgs = document.createElement("kbd")
+            cmdArgs.className = "history-cmd"
+            cmdArgs.textContent = element.cmd + " " + element.args
+            cmd.appendChild(cmdArgs)
 
             var btn = document.createElement("button")
             btn.className = "btn btn-outline-primary col-sm-2"
@@ -49,12 +52,13 @@ function history() {
             btn.textContent = "Run again"
 
             var entry = document.createElement("div")
-            entry.className = "row"
+            entry.className = "row history-entry"
             entry.id = "history-entry-" + element.id
             entry.appendChild(cmd)
             entry.appendChild(btn)
             
             history.appendChild(entry)
+            history.appendChild(document.createElement("hr"))
         });
     }
 
