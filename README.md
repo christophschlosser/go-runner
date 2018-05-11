@@ -1,6 +1,16 @@
+- [Run applications on remote computers from the web](#run-applications-on-remote-computers-from-the-web)
+  * [Warning](#warning)
+  * [Usage](#usage)
+    + [POST run](#post-run)
+    + [GET history](#get-history)
+    + [POST history](#post-history)
+    + [Web UI](#web-ui)
+
 # Run applications on remote computers from the web
 
 The go-runner is a super simple web service which allows you to run any command on the computer it is started.
+
+## Warning
 
 **This program opens your computer to anyone. Make sure to use it only in trusted environments or add some sort of security infront of it. I'm not responsible for any damage you or others do to your computer.**
 
@@ -75,7 +85,7 @@ $ curl http://127.0.0.1:8080/v1/history?json=true
 
 ### POST history
 
-Similar to the GET you can send a POST to `/v1/history/[id]` where [id] matches the number infront of the command you want to execute from the GET history.
+Similar to the GET you can send a POST to `/v1/history/[id]` where [id] matches the number infront of the command you want to execute from the [GET history](#get-history).
 
 Example:
 
@@ -105,6 +115,8 @@ $ curl -X POST http://127.0.0.1:8080/v1/history/3?json=true
 ### Web UI
 
 Specify the `-www` option with a path to where you store your static web files.
+
+An example ui can be found in the repository under the www folder.
 
 Example:
 

@@ -1,0 +1,13 @@
+.body-section {
+    margin-top: 3%;
+}
+
+.history-entry {
+    position: relative;
+}
+
+.history-cmd {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
