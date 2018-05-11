@@ -121,5 +121,5 @@ An example ui can be found in the repository under the www folder.
 Example:
 
 ```bash
-$ ./go-runner.linux -www ./www
+$ ./go-runner -www ./www/
 ```
