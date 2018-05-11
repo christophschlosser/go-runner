@@ -45,7 +45,8 @@ You can also get the response in JSON format if you desire. Specify the query pa
 Example:
 
 ```bash
-$ curl -X POST http://127.0.0.1:8080/v1/run/ls?json=true -d 'args=-a -p'{"output":"./\n../\n.git/\n.gitignore\n.travis.yml\n.vscode/\nLICENSE\nREADME.md\ngo-runner\ngo-runner.go\nwww/\n"}
+$ curl -X POST http://127.0.0.1:8080/v1/run/ls?json=true -d 'args=-a -p'
+{"output":"./\n../\n.git/\n.gitignore\n.travis.yml\n.vscode/\nLICENSE\nREADME.md\ngo-runner\ngo-runner.go\nwww/\n"}
 ```
 
 ### GET history
@@ -68,6 +69,7 @@ Example:
 
 ```bash
 $ curl http://127.0.0.1:8080/v1/history?json=true
+
 [{"id":0,"cmd":"ls","args":"-l"},{"id":1,"cmd":"ls","args":"-a"},{"id":2,"cmd":"ls","args":"-a -d"},{"id":3,"cmd":"ls","args":"-a -p"}]
 ```
 
@@ -96,7 +98,8 @@ You can also get the response in JSON format if you desire. Specify the query pa
 Example:
 
 ```bash
-$ curl -X POST http://127.0.0.1:8080/v1/history/3?json=true{"output":"./\n../\n.git/\n.gitignore\n.travis.yml\n.vscode/\nLICENSE\nREADME.md\ngo-runner\ngo-runner.go\nwww/\n"}
+$ curl -X POST http://127.0.0.1:8080/v1/history/3?json=true
+{"output":"./\n../\n.git/\n.gitignore\n.travis.yml\n.vscode/\nLICENSE\nREADME.md\ngo-runner\ngo-runner.go\nwww/\n"}
 ```
 
 ### Web UI
