@@ -11,6 +11,12 @@ import (
 )
 
 func main() {
+	// check for CLI options
+	host := flag.String("host", "127.0.0.1", "Hostname to listen on")
+	port := flag.Int("port", 8080, "Port to start the web server on")
+	html := flag.String("www", "", "Directory path where you keep your HTML files for the web UI. If no path is specified only the API is provided.")
+
+	flag.Parse()
 	e := echo.New()
 
 	// Middleware
@@ -22,64 +28,105 @@ func main() {
 	const apiPrefix = "/v1"
 
 	// Routes
+	if *html != "" {
+		e.Static("/", *html)
+	}
 	e.GET(apiPrefix+"/history", history)
 	e.POST(apiPrefix+"/history/:id", runHistory)
 	e.POST(apiPrefix+"/run/:command", runCmd)
-
-	// check for CLI options
-	host := flag.String("host", "127.0.0.1", "Hostname to listen on")
-	port := flag.Int("port", 8080, "Port to start the web server on")
-
-	flag.Parse()
 
 	// Start server
 	e.Logger.Fatal(e.Start(*host + ":" + strconv.Itoa(*port)))
 }
 
+type output struct {
+        Text string `json:"output"`
+}
+
 // History
-var (
-	cmds []string
-	args []string
-)
+type historyEntry struct {
+	ID   int    `json:"id"`
+	Cmd  string `json:"cmd"`
+	Args string `json:"args"`
+}
+
+var historyEntries []historyEntry
 
 // Handler
 func history(c echo.Context) error {
+	useJSON := c.QueryParam("json") == "true"
+	if useJSON {
+		if len(historyEntries) == 0 {
+			return c.String(http.StatusOK, "{}")
+		}
+		return c.JSON(http.StatusOK, historyEntries)
+	}
 	his := ""
-	for id, h := range cmds {
-		his += (strconv.Itoa(id) + " " + h + " " + args[id] + "\n")
+	for _, c := range historyEntries {
+		his += (strconv.Itoa(c.ID) + " " + c.Cmd + " " + c.Args + "\n")
 	}
 	return c.String(http.StatusOK, his)
 }
 
 func runHistory(c echo.Context) error {
+        useJSON := c.QueryParam("json") == "true"
 	id, _ := strconv.Atoi(c.Param("id"))
-	if len(cmds) <= id {
+	if len(historyEntries) <= id {
 		return c.String(http.StatusUnprocessableEntity, "ID does not exist\n")
 	}
-	cmd := cmds[id]
-	arg := args[id]
+	cmd := historyEntries[id].Cmd
+	arg := historyEntries[id].Args
 	out, err := run(cmd, arg)
 	if err != nil {
+                if (useJSON) {
+                        o := output {
+                                Text: "Command with ID does no longer exist\n",
+                        }
+                        return c.JSON(http.StatusUnprocessableEntity, o)
+                }
 		return c.String(http.StatusUnprocessableEntity, "Command with ID does no longer exist\n")
-	}
+        }
+        if (useJSON) {
+                o := output {
+                        Text: out,
+                }
+                return c.JSON(http.StatusOK, o)
+        }
 	return c.String(http.StatusOK, out)
 }
 
 func runCmd(c echo.Context) error {
+        useJSON := c.QueryParam("json") == "true"
 	command := c.Param("command")
 	arg := c.FormValue("args")
 
 	out, err := run(command, arg)
 
 	if err != nil {
+                if (useJSON) {
+                        o := output {
+                                Text: "Can not run comand: "+command+" "+arg+"\n",
+                        }
+                        return c.JSON(http.StatusUnprocessableEntity, o)
+                }
 		return c.String(http.StatusUnprocessableEntity, "Can not run comand: "+command+" "+arg+"\n")
-	}
+        }
+        if (useJSON) {
+                o := output {
+                        Text: out,
+                }
+                return c.JSON(http.StatusOK, o)
+        }
 	return c.String(http.StatusOK, out)
 }
 
 func run(command string, arg string) (string, error) {
-	cmds = append(cmds, command)
-	args = append(args, arg)
+	h := historyEntry{
+		ID:   len(historyEntries),
+		Cmd:  command,
+		Args: arg,
+	}
+	historyEntries = append(historyEntries, h)
 	cmdArgs := strings.Fields(arg)
 	out, err := exec.Command(command, cmdArgs...).Output()
 	res := string(out[:])
