@@ -10,10 +10,10 @@ function runCmd() {
     request.open("POST", self.location.origin + "/v1/run/" + document.getElementById("cmd").value.trim() + "?json=true", true)
 
     // Refresh history when done
-    request.onload = function() {
+    request.onload = function () {
         document.getElementById("output").innerHTML = "[" + self.location.hostname + "] $> " + document.getElementById("cmd").value.trim() + " " + document.getElementById("arg").value.trim()
-        var output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g,"$1")
-        
+        var output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g, "$1")
+
         document.getElementById("output").innerHTML += "<br/>" + output
         history()
     }
@@ -56,7 +56,7 @@ function history() {
             entry.id = "history-entry-" + element.id
             entry.appendChild(cmd)
             entry.appendChild(btn)
-            
+
             history.appendChild(entry)
             history.appendChild(document.createElement("hr"))
         });
@@ -74,10 +74,10 @@ function runHistory(id) {
     request.open("POST", self.location.origin + "/v1/history/" + id + "?json=true", true)
 
     // Refresh history when done
-    request.onload = function() {
+    request.onload = function () {
         document.getElementById("output").innerHTML = "[" + self.location.hostname + "] $> " + document.getElementById("history-entry-cmd-" + id).innerText
-        var output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g,"$1")
-        
+        var output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g, "$1")
+
         document.getElementById("output").innerHTML += "<br/>" + output
         history()
     }

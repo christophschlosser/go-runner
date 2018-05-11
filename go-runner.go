@@ -2,12 +2,13 @@ package main
 
 import (
 	"flag"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"net/http"
 	"os/exec"
 	"strconv"
 	"strings"
+
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func main() {
@@ -40,7 +41,7 @@ func main() {
 }
 
 type output struct {
-        Text string `json:"output"`
+	Text string `json:"output"`
 }
 
 // History
@@ -69,7 +70,7 @@ func history(c echo.Context) error {
 }
 
 func runHistory(c echo.Context) error {
-        useJSON := c.QueryParam("json") == "true"
+	useJSON := c.QueryParam("json") == "true"
 	id, _ := strconv.Atoi(c.Param("id"))
 	if len(historyEntries) <= id {
 		return c.String(http.StatusUnprocessableEntity, "ID does not exist\n")
@@ -78,45 +79,45 @@ func runHistory(c echo.Context) error {
 	arg := historyEntries[id].Args
 	out, err := run(cmd, arg)
 	if err != nil {
-                if (useJSON) {
-                        o := output {
-                                Text: "Command with ID does no longer exist\n",
-                        }
-                        return c.JSON(http.StatusUnprocessableEntity, o)
-                }
+		if useJSON {
+			o := output{
+				Text: "Command with ID does no longer exist\n",
+			}
+			return c.JSON(http.StatusUnprocessableEntity, o)
+		}
 		return c.String(http.StatusUnprocessableEntity, "Command with ID does no longer exist\n")
-        }
-        if (useJSON) {
-                o := output {
-                        Text: out,
-                }
-                return c.JSON(http.StatusOK, o)
-        }
+	}
+	if useJSON {
+		o := output{
+			Text: out,
+		}
+		return c.JSON(http.StatusOK, o)
+	}
 	return c.String(http.StatusOK, out)
 }
 
 func runCmd(c echo.Context) error {
-        useJSON := c.QueryParam("json") == "true"
+	useJSON := c.QueryParam("json") == "true"
 	command := c.Param("command")
 	arg := c.FormValue("args")
 
 	out, err := run(command, arg)
 
 	if err != nil {
-                if (useJSON) {
-                        o := output {
-                                Text: "Can not run comand: "+command+" "+arg+"\n",
-                        }
-                        return c.JSON(http.StatusUnprocessableEntity, o)
-                }
+		if useJSON {
+			o := output{
+				Text: "Can not run comand: " + command + " " + arg + "\n",
+			}
+			return c.JSON(http.StatusUnprocessableEntity, o)
+		}
 		return c.String(http.StatusUnprocessableEntity, "Can not run comand: "+command+" "+arg+"\n")
-        }
-        if (useJSON) {
-                o := output {
-                        Text: out,
-                }
-                return c.JSON(http.StatusOK, o)
-        }
+	}
+	if useJSON {
+		o := output{
+			Text: out,
+		}
+		return c.JSON(http.StatusOK, o)
+	}
 	return c.String(http.StatusOK, out)
 }
 
