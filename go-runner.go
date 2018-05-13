@@ -73,19 +73,27 @@ func runHistory(c echo.Context) error {
 	useJSON := c.QueryParam("json") == "true"
 	id, _ := strconv.Atoi(c.Param("id"))
 	if len(historyEntries) <= id {
-		return c.String(http.StatusUnprocessableEntity, "ID does not exist\n")
+		txt := "ID does not exist\n"
+		if useJSON {
+			o := output{
+				Text: txt,
+			}
+			return c.JSON(http.StatusUnprocessableEntity, o)
+		}
+		return c.String(http.StatusUnprocessableEntity, txt)
 	}
 	cmd := historyEntries[id].Cmd
 	arg := historyEntries[id].Args
 	out, err := run(cmd, arg)
 	if err != nil {
+		txt := "Command (" + cmd + ") with history id " + c.Param("id") + " does not exist\n"
 		if useJSON {
 			o := output{
-				Text: "Command with ID does no longer exist\n",
+				Text: txt,
 			}
 			return c.JSON(http.StatusUnprocessableEntity, o)
 		}
-		return c.String(http.StatusUnprocessableEntity, "Command with ID does no longer exist\n")
+		return c.String(http.StatusUnprocessableEntity, txt)
 	}
 	if useJSON {
 		o := output{
@@ -104,13 +112,14 @@ func runCmd(c echo.Context) error {
 	out, err := run(command, arg)
 
 	if err != nil {
+		txt := "Can not run comand: " + command + " " + arg + "\n"
 		if useJSON {
 			o := output{
-				Text: "Can not run comand: " + command + " " + arg + "\n",
+				Text: txt,
 			}
 			return c.JSON(http.StatusUnprocessableEntity, o)
 		}
-		return c.String(http.StatusUnprocessableEntity, "Can not run comand: "+command+" "+arg+"\n")
+		return c.String(http.StatusUnprocessableEntity, txt)
 	}
 	if useJSON {
 		o := output{

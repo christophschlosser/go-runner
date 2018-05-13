@@ -12,7 +12,12 @@ function runCmd() {
     // Refresh history when done
     request.onload = function () {
         document.getElementById("output").innerHTML = "[" + self.location.hostname + "] $> " + document.getElementById("cmd").value.trim() + " " + document.getElementById("arg").value.trim()
-        var output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g, "$1")
+        var output = ""
+        if (request.status == 200) {
+            output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g, "$1")
+        } else if (request.status == 422) {
+            output = JSON.parse(this.response).output
+        }
 
         document.getElementById("output").innerHTML += "<br/>" + output
         history()
@@ -76,7 +81,12 @@ function runHistory(id) {
     // Refresh history when done
     request.onload = function () {
         document.getElementById("output").innerHTML = "[" + self.location.hostname + "] $> " + document.getElementById("history-entry-cmd-" + id).innerText
-        var output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g, "$1")
+        var output = ""
+        if (request.status == 200) {
+            output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g, "$1")
+        } else if (request.status == 422) {
+            output = JSON.parse(this.response).output
+        }
 
         document.getElementById("output").innerHTML += "<br/>" + output
         history()
