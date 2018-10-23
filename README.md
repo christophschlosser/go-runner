@@ -52,7 +52,7 @@ go-runner
 go-runner.go
 
 # The cwd parameter needs an absolute path and a trailing slash.
-$ curl -X POST http://127.0.0.1:8080/v2/run/my-program -d 'args=--help' -d 'cwd=$PWD/my-stuff/'
+$ curl -X POST http://127.0.0.1:8080/v2/run/my-program -d 'args=--help' -d "cwd=$PWD/my-stuff/"
 my-program help message
 ```
 
