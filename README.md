@@ -30,14 +30,16 @@ The server exposes three API endpoints and optionally with the `-www` option a w
 
 ### POST run
 
-Send a POST to `/v1/run/[command]`, where [command] is then executed on the server PC.
+Send a POST to `/v2/run/[command]`, where [command] is then executed on the server PC.
 
 In the args form data you can specify additional arguments you'd like to pass to the command.
+
+If the program is not in the global path you can specify the path to the file with the `cwd` form value.
 
 Example:
 
 ```bash
-$ curl -X POST http://127.0.0.1:8080/v1/run/ls -d 'args=-a -p'
+$ curl -X POST http://127.0.0.1:8080/v2/run/ls -d 'args=-a -p'
 ./
 ../
 .git/
@@ -48,6 +50,10 @@ LICENSE
 README.md
 go-runner
 go-runner.go
+
+# The cwd parameter needs an absolute path and a trailing slash.
+$ curl -X POST http://127.0.0.1:8080/v2/run/my-program -d 'args=--help' -d "cwd=$PWD/my-stuff/"
+my-program help message
 ```
 
 You can also get the response in JSON format if you desire. Specify the query param `json=true` to do so.
@@ -55,18 +61,18 @@ You can also get the response in JSON format if you desire. Specify the query pa
 Example:
 
 ```bash
-$ curl -X POST http://127.0.0.1:8080/v1/run/ls?json=true -d 'args=-a -p'
+$ curl -X POST http://127.0.0.1:8080/v2/run/ls?json=true -d 'args=-a -p'
 {"output":"./\n../\n.git/\n.gitignore\n.travis.yml\n.vscode/\nLICENSE\nREADME.md\ngo-runner\ngo-runner.go\nwww/\n"}
 ```
 
 ### GET history
 
-Simple GET reques to `/v1/history` results in a bash like history with all the previous commands.
+Simple GET reques to `/v2/history` results in a bash like history with all the previous commands.
 
 Example:
 
 ```bash
-$ curl http://127.0.0.1:8080/v1/history
+$ curl http://127.0.0.1:8080/v2/history
 0 ls -l
 1 ls -a
 2 ls -a -d
@@ -78,19 +84,19 @@ You can also get the response in JSON format if you desire. Specify the query pa
 Example:
 
 ```bash
-$ curl http://127.0.0.1:8080/v1/history?json=true
+$ curl http://127.0.0.1:8080/v2/history?json=true
 
 [{"id":0,"cmd":"ls","args":"-l"},{"id":1,"cmd":"ls","args":"-a"},{"id":2,"cmd":"ls","args":"-a -d"},{"id":3,"cmd":"ls","args":"-a -p"}]
 ```
 
 ### POST history
 
-Similar to the GET you can send a POST to `/v1/history/[id]` where [id] matches the number infront of the command you want to execute from the [GET history](#get-history).
+Similar to the GET you can send a POST to `/v2/history/[id]` where [id] matches the number in front of the command you want to execute from the [GET history](#get-history).
 
 Example:
 
 ```bash
-$ curl -X POST http://127.0.0.1:8080/v1/history/3
+$ curl -X POST http://127.0.0.1:8080/v2/history/3
 ./
 ../
 .git/
@@ -108,7 +114,7 @@ You can also get the response in JSON format if you desire. Specify the query pa
 Example:
 
 ```bash
-$ curl -X POST http://127.0.0.1:8080/v1/history/3?json=true
+$ curl -X POST http://127.0.0.1:8080/v2/history/3?json=true
 {"output":"./\n../\n.git/\n.gitignore\n.travis.yml\n.vscode/\nLICENSE\nREADME.md\ngo-runner\ngo-runner.go\nwww/\n"}
 ```
 
