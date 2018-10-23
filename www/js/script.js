@@ -7,11 +7,11 @@ function runCmd() {
     var request = new XMLHttpRequest()
 
     // Open a new connection, using the GET request on the URL endpoint
-    request.open("POST", self.location.origin + "/v1/run/" + document.getElementById("cmd").value.trim() + "?json=true", true)
+    request.open("POST", self.location.origin + "/v2/run/" + document.getElementById("cmd").value.trim() + "?json=true", true)
 
     // Refresh history when done
     request.onload = function () {
-        document.getElementById("output").innerHTML = "[" + self.location.hostname + "] $> " + document.getElementById("cmd").value.trim() + " " + document.getElementById("arg").value.trim()
+        document.getElementById("output").innerHTML = "[" + self.location.hostname + "] $> " + document.getElementById("cwd").value.trim() + document.getElementById("cmd").value.trim() + " " + document.getElementById("arg").value.trim()
         var output = ""
         if (request.status == 200) {
             output = JSON.stringify(JSON.parse(this.response).output).replace(/\\n/g, "<br/>").replace(/\"([^(\")"]*)\"/g, "$1")
@@ -27,6 +27,7 @@ function runCmd() {
 
     var fd = new FormData()
     fd.append("args", document.getElementById("arg").value.trim())
+    fd.append("cwd", document.getElementById("cwd").value.trim())
     // Send request
     request.send(fd)
 }
@@ -36,7 +37,7 @@ function history() {
     var request = new XMLHttpRequest()
 
     // Open a new connection, using the GET request on the URL endpoint
-    request.open("GET", self.location.origin + "/v1/history?json=true", true)
+    request.open("GET", self.location.origin + "/v2/history?json=true", true)
 
     request.onload = function () {
         var data = JSON.parse(this.response);
@@ -48,7 +49,7 @@ function history() {
             cmd.id = "history-entry-cmd-" + element.id
             var cmdArgs = document.createElement("kbd")
             cmdArgs.className = "history-cmd"
-            cmdArgs.textContent = element.cmd + " " + element.args
+            cmdArgs.textContent = element.dir + element.cmd + " " + element.args
             cmd.appendChild(cmdArgs)
 
             var btn = document.createElement("button")
@@ -76,7 +77,7 @@ function runHistory(id) {
     var request = new XMLHttpRequest()
 
     // Open a new connection, using the GET request on the URL endpoint
-    request.open("POST", self.location.origin + "/v1/history/" + id + "?json=true", true)
+    request.open("POST", self.location.origin + "/v2/history/" + id + "?json=true", true)
 
     // Refresh history when done
     request.onload = function () {
