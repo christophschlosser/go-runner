@@ -20,7 +20,7 @@ func TestRunCmd(t *testing.T) {
 	f.Set("args", "-l")
 
 	// Positive test
-	req := httptest.NewRequest(echo.POST, "/v1/", strings.NewReader(f.Encode()))
+	req := httptest.NewRequest(echo.POST, "/v2/", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -36,7 +36,7 @@ func TestRunCmd(t *testing.T) {
 	// Positive JSON test
 	q := make(url.Values)
 	q.Set("json", "true")
-	req = httptest.NewRequest(echo.POST, "/v1/?"+q.Encode(), strings.NewReader(f.Encode()))
+	req = httptest.NewRequest(echo.POST, "/v2/?"+q.Encode(), strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -51,7 +51,7 @@ func TestRunCmd(t *testing.T) {
 	}
 
 	// Negative test
-	req = httptest.NewRequest(echo.POST, "/v1/", strings.NewReader(f.Encode()))
+	req = httptest.NewRequest(echo.POST, "/v2/", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -66,7 +66,7 @@ func TestRunCmd(t *testing.T) {
 	}
 
 	// Negative JSON test
-	req = httptest.NewRequest(echo.POST, "/v1/?"+q.Encode(), strings.NewReader(f.Encode()))
+	req = httptest.NewRequest(echo.POST, "/v2/?"+q.Encode(), strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -86,7 +86,7 @@ func TestRunHistory(t *testing.T) {
 	e := echo.New()
 
 	// Positive test
-	req := httptest.NewRequest(echo.POST, "/v1/", nil)
+	req := httptest.NewRequest(echo.POST, "/v2/", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -102,7 +102,7 @@ func TestRunHistory(t *testing.T) {
 	// Positive JSON test
 	q := make(url.Values)
 	q.Set("json", "true")
-	req = httptest.NewRequest(echo.POST, "/v1/?"+q.Encode(), nil)
+	req = httptest.NewRequest(echo.POST, "/v2/?"+q.Encode(), nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -117,7 +117,7 @@ func TestRunHistory(t *testing.T) {
 	}
 
 	// Negative test
-	req = httptest.NewRequest(echo.POST, "/v1/", nil)
+	req = httptest.NewRequest(echo.POST, "/v2/", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -132,7 +132,7 @@ func TestRunHistory(t *testing.T) {
 	}
 
 	// Negative JSON test
-	req = httptest.NewRequest(echo.POST, "/v1/?"+q.Encode(), nil)
+	req = httptest.NewRequest(echo.POST, "/v2/?"+q.Encode(), nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -147,7 +147,7 @@ func TestRunHistory(t *testing.T) {
 	}
 
 	// Run command from previous history no longer exists
-	req = httptest.NewRequest(echo.POST, "/v1/?"+q.Encode(), nil)
+	req = httptest.NewRequest(echo.POST, "/v2/?"+q.Encode(), nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -158,7 +158,7 @@ func TestRunHistory(t *testing.T) {
 
 	invalidCmdID := strconv.Itoa(len(historyEntries) - 1)
 
-	req = httptest.NewRequest(echo.POST, "/v1/", nil)
+	req = httptest.NewRequest(echo.POST, "/v2/", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -173,7 +173,7 @@ func TestRunHistory(t *testing.T) {
 	}
 
 	// JSON test
-	req = httptest.NewRequest(echo.POST, "/v1/?"+q.Encode(), nil)
+	req = httptest.NewRequest(echo.POST, "/v2/?"+q.Encode(), nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
@@ -193,7 +193,7 @@ func TestHistory(t *testing.T) {
 	assert := assert.New(t)
 
 	// Normal test
-	req := httptest.NewRequest(echo.GET, "/v1/history", nil)
+	req := httptest.NewRequest(echo.GET, "/v2/history", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
@@ -205,7 +205,7 @@ func TestHistory(t *testing.T) {
 	// JSON test
 	q := make(url.Values)
 	q.Set("json", "true")
-	req = httptest.NewRequest(echo.GET, "/v1/history?"+q.Encode(), nil)
+	req = httptest.NewRequest(echo.GET, "/v2/history?"+q.Encode(), nil)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 
@@ -218,7 +218,7 @@ func TestHistory(t *testing.T) {
 	// Empty History
 	historyEntries = historyEntries[:0]
 
-	req = httptest.NewRequest(echo.GET, "/v1/history", nil)
+	req = httptest.NewRequest(echo.GET, "/v2/history", nil)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 
@@ -229,7 +229,7 @@ func TestHistory(t *testing.T) {
 	}
 
 	// JSON test
-	req = httptest.NewRequest(echo.GET, "/v1/history?"+q.Encode(), nil)
+	req = httptest.NewRequest(echo.GET, "/v2/history?"+q.Encode(), nil)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 

@@ -26,7 +26,7 @@ func main() {
 	}))
 	e.Use(middleware.Recover())
 
-	const apiPrefix = "/v1"
+	const apiPrefix = "/v2"
 
 	// Routes
 	if *html != "" {
@@ -49,6 +49,7 @@ type historyEntry struct {
 	ID   int    `json:"id"`
 	Cmd  string `json:"cmd"`
 	Args string `json:"args"`
+	Dir  string `json:"dir"`
 }
 
 var historyEntries []historyEntry
@@ -64,7 +65,7 @@ func history(c echo.Context) error {
 	}
 	his := ""
 	for _, c := range historyEntries {
-		his += (strconv.Itoa(c.ID) + " " + c.Cmd + " " + c.Args + "\n")
+		his += strconv.Itoa(c.ID) + " " + c.Dir + c.Cmd + " " + c.Args + "\n"
 	}
 	return c.String(http.StatusOK, his)
 }
@@ -84,9 +85,10 @@ func runHistory(c echo.Context) error {
 	}
 	cmd := historyEntries[id].Cmd
 	arg := historyEntries[id].Args
-	out, err := run(cmd, arg)
+	dir := historyEntries[id].Dir
+	out, err := run(cmd, arg, dir)
 	if err != nil {
-		txt := "Command (" + cmd + ") with history id " + c.Param("id") + " does not exist\n"
+		txt := "Command (" + dir + cmd + ") with history id " + c.Param("id") + " does not exist\n"
 		if useJSON {
 			o := output{
 				Text: txt,
@@ -108,11 +110,12 @@ func runCmd(c echo.Context) error {
 	useJSON := c.QueryParam("json") == "true"
 	command := c.Param("command")
 	arg := c.FormValue("args")
+	dir := c.FormValue("cwd")
 
-	out, err := run(command, arg)
+	out, err := run(command, arg, dir)
 
 	if err != nil {
-		txt := "Can not run comand: " + command + " " + arg + "\n"
+		txt := "Can not run comand: " + dir + command + " " + arg + "\n"
 		if useJSON {
 			o := output{
 				Text: txt,
@@ -130,15 +133,17 @@ func runCmd(c echo.Context) error {
 	return c.String(http.StatusOK, out)
 }
 
-func run(command string, arg string) (string, error) {
+func run(command string, arg string, dir string) (string, error) {
 	h := historyEntry{
 		ID:   len(historyEntries),
 		Cmd:  command,
 		Args: arg,
+		Dir:  dir,
 	}
 	historyEntries = append(historyEntries, h)
 	cmdArgs := strings.Fields(arg)
-	out, err := exec.Command(command, cmdArgs...).Output()
+	cmd := exec.Command(dir + command, cmdArgs...)
+	out, err := cmd.Output()
 	res := string(out[:])
 
 	return res, err
