@@ -14,11 +14,15 @@
         <div class="container">
             <h1 class="body-section">Run command</h1>
             <div id="run-bar" class="row">
-                <div id="command" class="col-sm-4">
+                <div id="path" class="col-sm-4">
+                    <input class="form-control form-control-lg" id="cwd" type="text" placeholder="Path" data-toggle="tooltip" data-placement="bottom"
+                        title="Enter the path where you want to execute the command">
+                </div>
+                <div id="command" class="col-sm-2">
                     <input class="form-control form-control-lg" id="cmd" type="text" placeholder="Command" data-toggle="tooltip" data-placement="bottom"
                         title="Enter the command you want to execute here">
                 </div>
-                <div id="args" class="col-sm-6">
+                <div id="args" class="col-sm-4">
                     <input class="form-control form-control-lg" id="arg" type="text" placeholder="Arguments" data-toggle="tooltip" data-placement="bottom"
                         title="Specify the arguments for the command">
                 </div>
